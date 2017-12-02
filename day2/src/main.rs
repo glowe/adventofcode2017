@@ -1,7 +1,4 @@
-extern crate csv;
-
-use csv::ReaderBuilder;
-use std::io;
+use std::io::{self, Read};
 
 fn max_delta(row: &Vec<u32>) -> u32 {
     let min: &u32 = row.iter().min().unwrap();
@@ -22,18 +19,15 @@ fn find_quotient(rows: &mut Vec<u32>) -> u32 {
 }
 
 fn main() {
-    // Build the CSV reader and iterate over each record.
-    let mut rdr = ReaderBuilder::new()
-        .has_headers(false)
-        .delimiter(b'\t')
-        .flexible(true)
-        .from_reader(io::stdin());
+    let mut buffer = String::new();
+    let stdin = io::stdin();
+    let mut handle = stdin.lock();
+    handle.read_to_string(&mut buffer).unwrap();
 
     let mut sum_delta: u32 = 0;
     let mut sum_quotient: u32 = 0;
-    for result in rdr.records() {
-        let record = result.expect("couldn't parse tsv row");
-        let mut row: Vec<u32> = record.iter().map(|number| number.parse().unwrap()).collect();
+    for line in buffer.trim().lines() {
+        let mut row: Vec<u32> = line.split_whitespace().map(|number| number.parse().unwrap()).collect();
         sum_delta += max_delta(&row);
         sum_quotient += find_quotient(&mut row);
     }
