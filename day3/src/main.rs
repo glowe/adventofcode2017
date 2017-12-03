@@ -104,7 +104,6 @@ fn first_value_larger(input: u32) -> u32 {
 
 
         values.insert((x, y), value);
-//        println!("({},{}) = {}", x, y, value);
 
         if value > input {
             return value;
@@ -132,7 +131,7 @@ fn first_value_larger(input: u32) -> u32 {
 
 fn main() {
     println!("part 1: {}", num_steps(368078));
-    println!("part 1: {}", first_value_larger(368078));
+    println!("part 2: {}", first_value_larger(368078));
 }
 
 #[cfg(test)]
