@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate lazy_static;
 extern crate regex;
 
 use std::collections::HashMap;
@@ -5,6 +7,15 @@ use std::env;
 use std::process;
 use std::fs::File;
 use std::io::{BufReader, Read, Result};
+use regex::Regex;
+
+
+#[derive(Debug)]
+struct Program {
+    name: String,
+    weight: u32,
+    children: Vec<String>,
+}
 
 fn read_file(path: &str) -> Result<String> {
     let file = File::open(path)?;
@@ -14,16 +25,36 @@ fn read_file(path: &str) -> Result<String> {
     Ok(buffer)
 }
 
-fn parse(line: &str) -> (&str, Vec<&str>) {
-    let mut split: Vec<_> = line.trim().split(" -> ").collect();
-    let program_and_weight = split.remove(0);
-    let program = program_and_weight.split_whitespace().next().unwrap();
-    let programs: Vec<&str> = if let Some(csv) = split.pop() {
-        csv.split(", ").collect()
-    } else {
-        Vec::new()
-    };
-    (program, programs)
+lazy_static! {
+    static ref RE: regex::Regex = Regex::new(
+        r"^(?P<name>\w+) \((?P<weight>\d+)\)(?: -> (?P<children>.+))?$"
+    ).unwrap();
+}
+
+fn parse(line: &str) -> Program {
+    let caps = RE.captures(line).expect("Encountered error with line");
+    let name: String = caps.name("name")
+        .unwrap()
+        .as_str()
+        .to_string();
+    let weight: u32 = caps.name("weight")
+        .unwrap()
+        .as_str()
+        .parse()
+        .expect("Couldn't convert weight to a number.");
+    let children: Vec<String> = caps.name("children")
+        .map_or_else(Vec::new, |m| {
+            m.as_str()
+                .split(", ")
+                .map(|s| s.to_string())
+                .collect()
+
+        });
+    Program {
+        name: name,
+        weight: weight,
+        children: children,
+    }
 }
 
 fn main() {
@@ -37,19 +68,19 @@ fn main() {
     let mut indegrees: HashMap<String, u32> = HashMap::new();
 
     for line in input.lines() {
-        let (program, programs) = parse(line);
-        if !indegrees.contains_key(program) {
-            indegrees.insert(program.to_owned(), 0);
+        let program = parse(line);
+        if !indegrees.contains_key(&program.name) {
+            indegrees.insert(program.name, 0);
         }
-        for program in programs {
-            let indegree = indegrees.entry(program.to_owned()).or_insert(1);
+        for name in program.children {
+            let indegree = indegrees.entry(name).or_insert(1);
             *indegree += 1;
         }
     }
 
     let root = indegrees.iter()
-        .find(|&(_program, &indegree)| indegree == 0)
-        .map(|(program, _indegree)| program)
+        .find(|&(_name, &indegree)| indegree == 0)
+        .map(|(name, _indegree)| name)
         .unwrap();
     println!("part 1: {}", root);
 }
@@ -60,7 +91,9 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        assert_eq!(parse("prog1 (123) -> prog2, prog3, prog4"),
-                   ("prog1", vec!["prog2", "prog3", "prog4"]));
+        let program = parse("prog1 (123) -> prog2, prog3, prog4");
+        assert_eq!(program.name, "prog1");
+        assert_eq!(program.weight, 123);
+        assert_eq!(program.children, vec!["prog2", "prog3", "prog4"]);
     }
 }
