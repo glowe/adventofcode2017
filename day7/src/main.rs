@@ -48,7 +48,6 @@ fn parse(line: &str) -> Program {
                 .split(", ")
                 .map(|s| s.to_string())
                 .collect()
-
         });
     Program {
         name: name,
@@ -73,7 +72,7 @@ fn main() {
             indegrees.insert(program.name, 0);
         }
         for name in program.children {
-            let indegree = indegrees.entry(name).or_insert(1);
+            let indegree = indegrees.entry(name).or_insert(0);
             *indegree += 1;
         }
     }
