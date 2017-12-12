@@ -14,15 +14,15 @@ fn parse(input: &str) -> Vec<u32> {
     input.chars().map(|c| c.to_digit(10).unwrap()).collect()
 }
 
-fn sum_match_next(captcha: &Vec<u32>) -> u32 {
+fn sum_match_next(captcha: &[u32]) -> u32 {
     sum_match_offset(captcha, 1)
 }
 
-fn sum_match_halfway_around(captcha: &Vec<u32>) -> u32 {
+fn sum_match_halfway_around(captcha: &[u32]) -> u32 {
     sum_match_offset(captcha, captcha.len() / 2)
 }
 
-fn sum_match_offset(captcha: &Vec<u32>, offset: usize) -> u32 {
+fn sum_match_offset(captcha: &[u32], offset: usize) -> u32 {
     let n = captcha.len();
     (0..n)
         .map(|i| if captcha[i] == captcha[(i + offset) % n] {
