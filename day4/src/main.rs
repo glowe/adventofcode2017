@@ -15,8 +15,7 @@ fn parse(input: &str) -> Vec<Vec<&str>> {
         .collect()
 }
 
-fn is_passphrase_valid(passphrase: &Vec<&str>) -> bool
-{
+fn is_passphrase_valid(passphrase: &[&str]) -> bool {
     let mut words: HashSet<_> = HashSet::new();
     for word in passphrase {
         if words.contains(&word) {
@@ -54,27 +53,22 @@ fn main() {
         .count();
     println!("part 1: {}", num_without_dupes);
 
-    let normed: Vec<Vec<String>> = passphrases
-        .iter()
+    let normed: Vec<Vec<String>> = passphrases.iter()
         .map(|passphrase| {
-            passphrase
-                .iter()
-                .map(|word| normalize(word) )
+            passphrase.iter()
+                .map(|word| normalize(word))
                 .collect()
         })
         .collect();
-    let normed_refs: Vec<Vec<&str>> = normed
-        .iter()
+    let normed_refs: Vec<Vec<&str>> = normed.iter()
         .map(|passphrase| {
-            passphrase
-                .iter()
+            passphrase.iter()
                 .map(|word| word.as_ref())
                 .collect()
         })
         .collect();
-    
-    let num_without_anagrams = normed_refs
-        .iter()
+
+    let num_without_anagrams = normed_refs.iter()
         .filter(|passphrase| is_passphrase_valid(passphrase))
         .count();
     println!("part 2: {}", num_without_anagrams);
