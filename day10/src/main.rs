@@ -23,11 +23,9 @@ fn creverse<T: std::fmt::Debug>(vec: &mut [T], start: usize, length: usize) {
 
 fn knot_hash<T: std::fmt::Debug>(mut vec: &mut [T], lengths: &[usize]) {
     let mut pos = 0;
-    let mut skip = 0;
-    for length in lengths.iter() {
+    for (skip, length) in lengths.iter().enumerate() {
         creverse(&mut vec, pos, *length);
         pos = (pos + *length + skip) % vec.len();
-        skip += 1;
     }
 }
 
