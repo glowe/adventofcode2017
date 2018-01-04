@@ -1,6 +1,6 @@
 use std::io::{self, Read};
 
-fn max_delta(row: &Vec<u32>) -> u32 {
+fn max_delta(row: &[u32]) -> u32 {
     let min: &u32 = row.iter().min().unwrap();
     let max: &u32 = row.iter().max().unwrap();
     max - min
