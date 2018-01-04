@@ -59,7 +59,7 @@ fn first_value_larger(input: u32) -> u32 {
     squares.insert(1, (0, 0));
     values.insert((0, 0), 1);
     let mut value = 0;
-    for s in 2..100000 {
+    for s in 2.. {
         match direction {
             East => x += 1,
             North => y += 1,
@@ -102,7 +102,6 @@ fn first_value_larger(input: u32) -> u32 {
             value += v;
         }
 
-
         values.insert((x, y), value);
 
         if value > input {
@@ -123,15 +122,14 @@ fn first_value_larger(input: u32) -> u32 {
             if times_matched % 2 == 0 {
                 incr += 1;
             }
-
         }
     }
     value
 }
 
 fn main() {
-    println!("part 1: {}", num_steps(368078));
-    println!("part 2: {}", first_value_larger(368078));
+    println!("part 1: {}", num_steps(368_078));
+    println!("part 2: {}", first_value_larger(368_078));
 }
 
 #[cfg(test)]
