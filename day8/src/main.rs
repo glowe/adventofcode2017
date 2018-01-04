@@ -1,19 +1,12 @@
 #![feature(slice_patterns)]
 #![feature(match_default_bindings)]
-use std::collections::HashMap;
-use std::cmp;
-use std::env;
-use std::fs::File;
-use std::io::{BufReader, Read, Result};
-use std::process;
+extern crate advent;
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut reader = BufReader::new(file);
-    let mut buffer = String::new();
-    reader.read_to_string(&mut buffer)?;
-    Ok(buffer)
-}
+use advent::get_path_or_exit;
+use advent::read_file;
+use std::cmp;
+use std::collections::HashMap;
+
 
 fn execute<'a>(reg: &'a str, inc: &str, delta: i32, registers: &mut HashMap<&'a str, i32>) {
     let delta = match inc {
@@ -56,13 +49,8 @@ fn run<'a>(input: &'a str, mut registers: &mut HashMap<&'a str, i32>) -> Option<
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {} <input>", args[0]);
-        process::exit(1);
-    }
-    let path = &args[1];
-    let input = read_file(path).unwrap();
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
     let mut registers: HashMap<&str, i32> = HashMap::new();
     let highest_value = run(&input, &mut registers);
     println!("part 1: {}", registers.values().max().unwrap());

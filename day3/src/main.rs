@@ -1,4 +1,9 @@
+extern crate advent;
+
+use advent::read_file;
 use std::collections::HashMap;
+use std::env;
+use std::process;
 
 #[derive(Clone, Debug)]
 enum CardinalDirection {
@@ -128,8 +133,11 @@ fn first_value_larger(input: u32) -> u32 {
 }
 
 fn main() {
-    println!("part 1: {}", num_steps(368_078));
-    println!("part 2: {}", first_value_larger(368_078));
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
+    let square = input.trim().parse().unwrap();
+    println!("part 1: {}", num_steps(square));
+    println!("part 2: {}", first_value_larger(square));
 }
 
 #[cfg(test)]

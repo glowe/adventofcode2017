@@ -1,7 +1,7 @@
-use std::env;
-use std::fs::File;
-use std::io::{BufReader, Read, Result};
-use std::process;
+extern crate advent;
+
+use advent::get_path_or_exit;
+use advent::read_file;
 use std::collections::HashMap;
 
 fn position_of_max(vec: &[u32]) -> usize {
@@ -9,7 +9,6 @@ fn position_of_max(vec: &[u32]) -> usize {
     assert!(*max > 0);
     vec.iter().position(|x| *x == *max).unwrap()
 }
-
 
 fn count_redistribution_cycles(banks: &mut Vec<u32>, num_repeats: u32) -> u32 {
     let mut configs = HashMap::new();
@@ -42,22 +41,9 @@ fn parse(input: &str) -> Vec<u32> {
         .collect()
 }
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut buffer = String::new();
-    let mut buf_reader = BufReader::new(file);
-    buf_reader.read_to_string(&mut buffer)?;
-    Ok(buffer)
-}
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {} <input>", args[0]);
-        process::exit(1);
-    }
-    let path = &args[1];
-    let input = read_file(path).unwrap();
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
     let banks = parse(&input);
     let cycles = count_redistribution_cycles(&mut banks.clone(), 2);
     println!("part 1: {}", cycles);

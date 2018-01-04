@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Graham Lowe <graham.lowe@gmail.com>"]
 
 [dependencies]
+advent = { path = "../advent" }
 regex = "0.2"

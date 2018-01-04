@@ -4,13 +4,12 @@
 /// second level of the tower. What we are supposed to do is try to
 /// "balance" as hight up in the tower as possible.
 extern crate regex;
+extern crate advent;
 
+use advent::get_path_or_exit;
+use advent::read_file;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::env;
-use std::process;
-use std::fs::File;
-use std::io::{BufReader, Read, Result};
 use regex::Regex;
 
 #[derive(Debug)]
@@ -88,14 +87,6 @@ impl<'a> Tower<'a> {
     }
 }
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut buffer = String::new();
-    let mut reader = BufReader::new(file);
-    reader.read_to_string(&mut buffer)?;
-    Ok(buffer)
-}
-
 // TODO: error handling
 fn parse(input: &str) -> Tower {
     let mut tower = Tower {
@@ -116,13 +107,8 @@ fn parse(input: &str) -> Tower {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {}", args[0]);
-        process::exit(1);
-    }
-    let path = &args[1];
-    let input = read_file(path).unwrap();
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
     let tower = parse(&input);
     println!("part 1: {}", tower.base());
     println!("part 2: {:?}", tower.correct_weight(tower.wrongest()));

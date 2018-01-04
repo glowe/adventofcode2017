@@ -1,11 +1,13 @@
-use std::io;
+extern crate advent;
+
+use advent::get_path_or_exit;
+use advent::read_file;
 
 fn main() {
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).unwrap();
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
     // Strip the newline.
-    input.pop();
-    let captcha: Vec<u32> = parse(&input);
+    let captcha: Vec<u32> = parse(&input.trim());
     println!("part one: {}", sum_match_next(&captcha));
     println!("part two: {}", sum_match_halfway_around(&captcha));
 }

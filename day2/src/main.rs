@@ -1,4 +1,7 @@
-use std::io::{self, Read};
+extern crate advent;
+
+use advent::get_path_or_exit;
+use advent::read_file;
 
 fn max_delta(row: &[u32]) -> u32 {
     let min: &u32 = row.iter().min().unwrap();
@@ -19,14 +22,12 @@ fn find_quotient(rows: &mut Vec<u32>) -> u32 {
 }
 
 fn main() {
-    let mut buffer = String::new();
-    let stdin = io::stdin();
-    let mut handle = stdin.lock();
-    handle.read_to_string(&mut buffer).unwrap();
+    let path = get_path_or_exit();
+    let input = read_file(&path).unwrap();
 
     let mut sum_delta: u32 = 0;
     let mut sum_quotient: u32 = 0;
-    for line in buffer.trim().lines() {
+    for line in input.trim().lines() {
         let mut row: Vec<u32> = line.split_whitespace().map(|number| number.parse().unwrap()).collect();
         sum_delta += max_delta(&row);
         sum_quotient += find_quotient(&mut row);

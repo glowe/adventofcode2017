@@ -1,17 +1,7 @@
-use std::env;
-use std::fs::File;
-use std::io::BufReader;
-use std::io::Read;
-use std::io::Result;
-use std::process;
+extern crate advent;
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut reader = BufReader::new(file);
-    let mut buffer = String::new();
-    reader.read_to_string(&mut buffer)?;
-    Ok(buffer)
-}
+use advent::get_path_or_exit;
+use advent::read_file;
 
 fn score(input: &str) -> (u32, u32) {
     let mut stack: Vec<char> = Vec::new();
@@ -59,12 +49,7 @@ fn score(input: &str) -> (u32, u32) {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {} <filepath>", args[0]);
-        process::exit(1);
-    }
-    let path: &str = &args[1];
+    let path = get_path_or_exit();
     let input = read_file(&path).unwrap();
     println!("part 1: {}", score(&input).0);
     println!("part 2: {}", score(&input).1);

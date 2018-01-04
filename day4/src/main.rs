@@ -1,9 +1,9 @@
+extern crate advent;
+
+use advent::get_path_or_exit;
+use advent::read_file;
 use std::collections::HashSet;
-use std::env;
-use std::fs::File;
-use std::io::{BufReader, Read, Result};
 use std::iter::FromIterator;
-use std::process;
 
 fn parse(input: &str) -> Vec<Vec<&str>> {
     input.lines()
@@ -26,14 +26,6 @@ fn is_passphrase_valid(passphrase: &[&str]) -> bool {
     true
 }
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut buf_reader = BufReader::new(file);
-    let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents)?;
-    Ok(contents)
-}
-
 fn normalize(word: &str) -> String {
     let mut chars: Vec<char> = word.chars().collect();
     chars.sort();
@@ -41,12 +33,8 @@ fn normalize(word: &str) -> String {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {} <input file>", args[0]);
-        process::exit(1);
-    }
-    let input = read_file(&args[1]).expect("Had trouble reading input file.");
+    let path = get_path_or_exit();
+    let input = read_file(&path).expect("Had trouble reading input file.");
     let passphrases = parse(&input);
     let num_without_dupes = passphrases.iter()
         .filter(|passphrase| is_passphrase_valid(passphrase))

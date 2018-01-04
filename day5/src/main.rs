@@ -1,15 +1,7 @@
-use std::env;
-use std::process;
-use std::fs::File;
-use std::io::{BufReader, Read, Result};
+extern crate advent;
 
-fn read_file(path: &str) -> Result<String> {
-    let file = File::open(path)?;
-    let mut buf_reader = BufReader::new(file);
-    let mut buffer: String = String::new();
-    buf_reader.read_to_string(&mut buffer)?;
-    Ok(buffer)
-}
+use advent::get_path_or_exit;
+use advent::read_file;
 
 fn to_i32s(contents: &str) -> Vec<i32> {
     contents.split_whitespace()
@@ -44,12 +36,8 @@ fn plus_or_minus_one(j: i32) -> i32 {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("usage: {} <input>", args[0]);
-        process::exit(1);
-    }
-    let contents = read_file(&args[1]).expect("Couldn't read input file");
+    let path = get_path_or_exit();
+    let contents = read_file(&path).expect("Couldn't read input file");
     let mut jump_offsets = to_i32s(&contents);
     println!(
         "part 1: {}",
