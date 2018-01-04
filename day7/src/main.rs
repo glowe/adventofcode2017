@@ -3,7 +3,6 @@
 /// were supposed to find the correct weight for a program in the
 /// second level of the tower. What we are supposed to do is try to
 /// "balance" as hight up in the tower as possible.
-
 extern crate regex;
 
 use std::collections::HashMap;
@@ -23,14 +22,8 @@ struct Tower<'a> {
 impl<'a> Tower<'a> {
     fn base(&self) -> &str {
         // The base is the program that doesn't appear above anything
-        let above: HashSet<&str> = self.above
-            .values()
-            .flat_map(|&ref a| a.clone())
-            .collect();
-        self.above
-            .keys()
-            .find(|&key| !above.contains(key))
-            .unwrap()
+        let above: HashSet<&str> = self.above.values().flat_map(|&ref a| a.clone()).collect();
+        self.above.keys().find(|&key| !above.contains(key)).unwrap()
     }
 
     // TODO: error handling if given bad name
@@ -47,16 +40,9 @@ impl<'a> Tower<'a> {
 
     // TODO: error handling if given bad name
     fn siblings(&self, name: &str) -> HashSet<&str> {
-        match self.above
-            .values()
-            .find(|above| above.contains(&name)) {
+        match self.above.values().find(|above| above.contains(&name)) {
             None => HashSet::new(),
-            Some(above) => {
-                above.iter()
-                    .filter(|&n| *n != name)
-                    .map(|n| *n)
-                    .collect()
-            }
+            Some(above) => above.iter().filter(|&n| *n != name).map(|n| *n).collect(),
         }
     }
 
@@ -75,14 +61,15 @@ impl<'a> Tower<'a> {
 
     fn wrongest(&self) -> &str {
         let programs: Vec<&str> = self.programs();
-        programs.into_iter()
+        programs
+            .into_iter()
             .find(|name| {
-                self.wrong(name) &&
-                !self.above
-                    .get(name)
-                    .unwrap()
-                    .iter()
-                    .any(|above| self.wrong(above))
+                self.wrong(name)
+                    && !self.above
+                        .get(name)
+                        .unwrap()
+                        .iter()
+                        .any(|above| self.wrong(above))
             })
             .unwrap()
     }
@@ -139,7 +126,6 @@ fn main() {
     let tower = parse(&input);
     println!("part 1: {}", tower.base());
     println!("part 2: {:?}", tower.correct_weight(tower.wrongest()));
-
 }
 
 #[cfg(test)]
@@ -147,7 +133,8 @@ mod tests {
     use super::*;
 
     fn tower() -> Tower<'static> {
-        parse("pbga (66)
+        parse(
+            "pbga (66)
 xhth (57)
 ebii (61)
 havc (66)
@@ -159,7 +146,8 @@ tknk (41) -> ugml, padx, fwft
 jptl (61)
 ugml (68) -> gyxo, ebii, jptl
 gyxo (61)
-cntj (57)")
+cntj (57)",
+        )
     }
 
     #[test]
