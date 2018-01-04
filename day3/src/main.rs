@@ -1,9 +1,8 @@
 extern crate advent;
 
+use advent::get_path_or_exit;
 use advent::read_file;
 use std::collections::HashMap;
-use std::env;
-use std::process;
 
 #[derive(Clone, Debug)]
 enum CardinalDirection {
