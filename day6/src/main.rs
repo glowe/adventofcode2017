@@ -4,10 +4,10 @@ use std::io::{BufReader, Read, Result};
 use std::process;
 use std::collections::HashMap;
 
-fn position_of_max(vec: &Vec<u32>) -> usize {
+fn position_of_max(vec: &[u32]) -> usize {
     let max = vec.iter().max().unwrap();
     assert!(*max > 0);
-    vec.iter().position(|&ref x| *x == *max).unwrap()
+    vec.iter().position(|x| *x == *max).unwrap()
 }
 
 
@@ -21,7 +21,7 @@ fn count_redistribution_cycles(banks: &mut Vec<u32>, num_repeats: u32) -> u32 {
             return cycles;
         }
 
-        let mut i = position_of_max(&banks);
+        let mut i = position_of_max(banks);
         let mut blocks = banks[i];
         banks[i] = 0;
         cycles += 1;
@@ -57,7 +57,7 @@ fn main() {
         process::exit(1);
     }
     let path = &args[1];
-    let input = read_file(&path).unwrap();
+    let input = read_file(path).unwrap();
     let banks = parse(&input);
     let cycles = count_redistribution_cycles(&mut banks.clone(), 2);
     println!("part 1: {}", cycles);
