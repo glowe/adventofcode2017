@@ -1,3 +1,4 @@
+#![feature(inclusive_range, inclusive_range_syntax)]
 extern crate advent;
 
 use advent::get_path_or_exit;
@@ -29,6 +30,19 @@ fn knot_hash<T: std::fmt::Debug>(mut vec: &mut [T], lengths: &[usize]) {
     }
 }
 
+fn sparse_hash<T: std::fmt::Debug>(mut vec: &mut [T], lengths: &[u8]) {
+    let mut pos = 0;
+    let mut skip = 0;
+    for _ in 0..64 {
+        for length in lengths.iter() {
+            let length = *length as usize;
+            creverse(&mut vec, pos, length);
+            pos = (pos + length + skip) % vec.len();
+            skip += 1;
+        }
+    }
+}
+
 fn csv_to_lengths(csv: &str) -> Vec<usize> {
     csv.trim()
         .split(",")
@@ -36,18 +50,52 @@ fn csv_to_lengths(csv: &str) -> Vec<usize> {
         .collect()
 }
 
+fn ascii_codes(input: &str) -> Vec<u8> {
+    let mut codes: Vec<u8> = input.trim().bytes().collect();
+    codes.extend_from_slice(&[17, 31, 73, 47, 23]);
+    codes
+}
+
+fn compact(vec: Vec<u8>) -> Vec<u8> {
+    vec.chunks(16)
+        .map(|v| {
+            v[0] ^ v[1] ^ v[2] ^ v[3] ^ v[4] ^ v[5] ^ v[6] ^ v[7] ^ v[8] ^ v[9] ^ v[10] ^ v[11]
+                ^ v[12] ^ v[13] ^ v[14] ^ v[15]
+        })
+        .collect()
+}
+
 fn main() {
     let path = get_path_or_exit();
     let input = read_file(&path).unwrap();
     let lengths = csv_to_lengths(&input);
-    let mut vec: Vec<i32> = (0..256).collect();
+    let mut vec: Vec<u8> = (0..=255).collect();
     knot_hash(&mut vec, &lengths);
-    println!("part 1: {}", vec[0] * vec[1]);
+    println!("part 1: {}", vec[0] as u32 * vec[1] as u32);
+
+    let ascii_code_lengths = ascii_codes(&input.trim());
+    let mut vec: Vec<u8> = (0..=255).collect();
+    sparse_hash(&mut vec, &ascii_code_lengths);
+    let dense_hash = compact(vec);
+    let hex: Vec<String> = dense_hash.iter().map(|n| format!("{:02x}", n)).collect();
+    println!("part 2: {}", hex.join(""));
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ascii_codes() {
+        assert_eq!(
+            ascii_codes("1,2,3"),
+            vec![49, 44, 50, 44, 51, 17, 31, 73, 47, 23]
+        );
+        assert_eq!(
+            ascii_codes("63,144,180,149"),
+            vec![54, 51, 44, 49, 52, 52, 44, 49, 56, 48, 44, 49, 52, 57]
+        )
+    }
 
     #[test]
     fn test_creverse_one() {
