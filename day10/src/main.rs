@@ -29,14 +29,17 @@ fn knot_hash<T: std::fmt::Debug>(mut vec: &mut [T], lengths: &[usize]) {
     }
 }
 
+fn csv_to_lengths(csv: &str) -> Vec<usize> {
+    csv.trim()
+        .split(",")
+        .map(|num| num.parse().unwrap())
+        .collect()
+}
+
 fn main() {
     let path = get_path_or_exit();
     let input = read_file(&path).unwrap();
-    let lengths: Vec<usize> = input
-        .trim()
-        .split(",")
-        .map(|num| num.parse().unwrap())
-        .collect();
+    let lengths = csv_to_lengths(&input);
     let mut vec: Vec<i32> = (0..256).collect();
     knot_hash(&mut vec, &lengths);
     println!("part 1: {}", vec[0] * vec[1]);
